@@ -1,0 +1,11 @@
+body {
+  width: 100vw;
+  height: 100vh;
+}
+
+body,
+html,
+#root,
+.m-b8a05bbd {
+  overflow: hidden !important;
+}
