@@ -1,32 +1,36 @@
 import { useState } from 'react';
 import {
   Button,
-  Flex,
-  Group,
-  Image,
   Modal,
   Stack,
   Text,
   TextInput,
+  useMantineTheme,
   rem,
+  Group,
+  Image,
+  Flex,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { useModal } from '../../hooks/use-modal';
-import classes from './create-server-modal.module.css';
-import { IconUpload, IconX } from '@tabler/icons-react';
+import { useModal } from '../../hooks';
+import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useMutation } from '@apollo/client';
-import { CREATE_SERVER } from '../../graphql/mutations/server/create-server';
+import { CREATE_SERVER } from '../../graphql/mutations';
 import {
   CreateServerMutation,
   CreateServerMutationVariables,
 } from '../../gql/graphql';
-import { useProfileStore } from '../../stores/profile-store';
+import { useProfileStore } from '../../stores';
 
 export function CreateServerModal() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+
+  const theme = useMantineTheme();
+
   const { isOpen, closeModal } = useModal('CreateServer');
+
   const [createServer, { loading, error }] = useMutation<
     CreateServerMutation,
     CreateServerMutationVariables
@@ -57,11 +61,11 @@ export function CreateServerModal() {
       onCompleted: () => {
         setImagePreview(null);
         setFile(null);
-        closeModal();
         form.reset();
+        closeModal();
       },
 
-      refetchQueries: ['GetServers'],
+      refetchQueries: ['GetServerByProfileIdOfMember'],
     });
   };
 
@@ -78,8 +82,13 @@ export function CreateServerModal() {
   };
 
   return (
-    <Modal title="Create a server" opened={isOpen} onClose={closeModal}>
-      <Text>
+    <Modal
+      title="Create a server"
+      opened={isOpen}
+      onClose={closeModal}
+      size="md"
+    >
+      <Text c={'dimmed'}>
         Give your server a personality by choosing a name and an image. You can
         always change it later.
       </Text>
@@ -88,29 +97,47 @@ export function CreateServerModal() {
           <Flex justify={'center'} align={'center'} direction={'column'}>
             {!imagePreview && (
               <Dropzone
-                onDrop={(files) => {
-                  handleDropzoneChange(files);
-                }}
+                onDrop={(files) => handleDropzoneChange(files)}
+                onReject={(files) => console.log('rejected files', files)}
+                maxSize={3 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
-                className={classes.dropzone}
                 mt={'md'}
               >
-                <Group style={{ minHeight: rem(100), pointerEvents: 'none' }}>
+                <Group
+                  position="center"
+                  spacing="xl"
+                  style={{ minHeight: rem(100), pointerEvents: 'none' }}
+                >
                   <Dropzone.Accept>
-                    <IconUpload size="3.2rem" stroke={1.5} />
+                    <IconUpload
+                      size="3.2rem"
+                      stroke={1.5}
+                      color={
+                        theme.colors[theme.primaryColor][
+                          theme.colorScheme === 'dark' ? 4 : 6
+                        ]
+                      }
+                    />
                   </Dropzone.Accept>
                   <Dropzone.Reject>
-                    <IconX size="3.2rem" stroke={1.5} />
+                    <IconX
+                      size="3.2rem"
+                      stroke={1.5}
+                      color={
+                        theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6]
+                      }
+                    />
                   </Dropzone.Reject>
                   <Dropzone.Idle>
-                    <IconUpload size="3.2rem" stroke={1.5} />
+                    <IconPhoto size="3.2rem" stroke={1.5} />
                   </Dropzone.Idle>
                   <>
                     <Text size="xl" inline>
                       Drag images here or click to select files
                     </Text>
                     <Text size="sm" c="dimmed" inline mt={7}>
-                      Upload a server icon
+                      Attach as many files as you like, each file should not
+                      exceed 5mb
                     </Text>
                   </>
                 </Group>
@@ -123,27 +150,28 @@ export function CreateServerModal() {
                   <Button
                     color="red"
                     pos="absolute"
-                    style={{
-                      zIndex: 1,
-                      borderRadius: '50%',
-                      padding: 0,
-                      width: rem(30),
-                      height: rem(30),
-                      top: 0,
-                      right: 18,
-                    }}
-                    onClick={() => {
+                    size="25"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
                       setImagePreview(null);
-                      setFile(null);
+                    }}
+                    style={{
+                      transform: 'translate(50%, 50%)',
+                      left: 100,
+                      top: 0,
+                      zIndex: 200,
                     }}
                   >
                     <IconX color="white" />
                   </Button>
                   <Image
+                    radius={100}
+                    width={rem(150)}
+                    height={rem(150)}
+                    fit="cover"
                     src={imagePreview}
-                    w={rem(150)}
-                    h={rem(150)}
-                    radius={'50%'}
+                    pos="absolute"
                   />
                 </>
               </Flex>
@@ -151,13 +179,13 @@ export function CreateServerModal() {
           </Flex>
           <TextInput
             label="Server name"
-            placeholder="Enter server name"
+            placeholder="Your server's name"
             {...form.getInputProps('name')}
             error={form.errors.name}
           />
           <Button
             disabled={!!form.errors.name || loading}
-            w={'50%'}
+            w={'30%'}
             type={'submit'}
             variant="gradient"
             mt={'md'}

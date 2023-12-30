@@ -1,113 +1,209 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
-  Button,
+  Navbar,
   Center,
-  Image,
-  Stack,
   Tooltip,
   UnstyledButton,
+  createStyles,
+  Stack,
   rem,
-  useMantineColorScheme,
+  Divider,
+  ScrollArea,
+  Avatar,
+  Box,
+  Sx,
 } from '@mantine/core';
 import {
-  IconArrowsJoin,
-  IconMoon,
+  IconFingerprint,
   IconPlus,
+  IconMoon,
   IconSun,
+  IconMessage,
 } from '@tabler/icons-react';
 import { UserButton } from '@clerk/clerk-react';
-import { useModal } from '../../hooks/use-modal';
-import { useServers } from '../../hooks/graphql/server/use-servers';
-import classes from './sidebar.module.css';
+import { useModal, useServers } from '../../hooks';
+import { useGeneralStore } from '../../stores';
+
+const useStyles = createStyles((theme) => ({
+  link: {
+    width: rem(50),
+    height: rem(50),
+    borderRadius: theme.radius.md,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[0]
+        : theme.colors.gray[7],
+    opacity: 0.7,
+
+    '&:hover': {
+      opacity: 1,
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[2]
+          : theme.colors.gray[1],
+    },
+  },
+
+  active: {
+    opacity: 1,
+    color: theme.white,
+    '&, &:hover': {
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[3]
+          : theme.colors.dark[3],
+    },
+  },
+}));
 
 interface NavbarLinkProps {
   label: string;
   active?: boolean;
-  imageUrl: string;
+  icon: React.FC<any>;
   onClick?: () => void;
 }
 
-function NavbarLink({ imageUrl, label, active, onClick }: NavbarLinkProps) {
+function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
+  const { classes, cx } = useStyles();
   return (
-    <Tooltip label={label} position="right">
+    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
       <UnstyledButton
         onClick={onClick}
-        data-active={active || undefined}
-        variant="transparent"
-        style={{ borderRadius: rem(100) }}
+        className={cx(classes.link, { [classes.active]: active })}
       >
-        <Image src={imageUrl} w={rem(50)} h={rem(50)} radius={100} />
+        <Icon size={'1.8rem'} stoke={1.5} />
       </UnstyledButton>
     </Tooltip>
   );
 }
 
+interface LinkType {
+  icon: React.FC<any>;
+  label: string;
+  onClick?: () => void;
+}
+
 export function Sidebar() {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const [active, setActive] = useState(2);
 
-  const navigate = useNavigate();
-  const [active, setActive] = useState(0);
+  const toggleDarkmode = useGeneralStore((state) => state.toggleDarkMode);
+  const isDarkMode = useGeneralStore((state) => state.isDarkMode);
 
-  const { servers, loading } = useServers();
-  const { openModal } = useModal('CreateServer');
+  const { servers, loadingServers } = useServers();
 
-  const links = servers?.map((server, index) => (
+  const createServerModal = useModal('CreateServer');
+  const joinServerModal = useModal('JoinServer');
+
+  const darkModeToggleLink = {
+    icon: isDarkMode ? IconSun : IconMoon,
+    label: isDarkMode ? 'Lightmode' : 'Darkmode',
+    onClick: toggleDarkmode,
+  };
+
+  const linksData: LinkType[] = [darkModeToggleLink];
+
+  const links = linksData?.map((link, index) => (
     <NavbarLink
-      key={server.id}
-      label={server.name}
-      imageUrl={server.imageUrl}
-      active={active === index}
+      {...link}
+      key={link.label}
+      active={index === active}
       onClick={() => {
+        if (link.onClick) link.onClick();
         setActive(index);
-        navigate(`/server/${server.id}`);
       }}
     />
   ));
 
+  const sx: Sx = (theme) => ({
+    backgroundColor:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[5]
+        : theme.colors.gray[3],
+    textAlign: 'center',
+    borderRadius: 100,
+    cursor: 'pointer',
+    justifyContent: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    border: 'none',
+    padding: 0,
+    '&:hover': {
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.gray[4],
+      transition: 'all 0.2s ease-in-out',
+    },
+  });
+
   return (
-    <nav className={classes.navbar}>
-      <Stack>
-        <Center>
-          <Button
-            className={classes.link}
-            variant="subtle"
-            radius={100}
-            onClick={openModal}
-          >
-            <IconPlus radius={100} />
-          </Button>
-        </Center>
-        <Center>
-          <Button
-            className={classes.link}
-            variant="subtle"
-            radius={100}
-            onClick={() => {}}
-          >
-            <IconArrowsJoin radius={100} />
-          </Button>
-        </Center>
-        <Stack justify="center" gap="md" mt="xl" align="center">
-          {links}
-        </Stack>
+    <Navbar
+      pos={'fixed'}
+      width={{ base: 80 }}
+      sx={(theme) => ({
+        backgroundColor:
+          theme.colorScheme === 'dark'
+            ? theme.colors.dark[5]
+            : theme.colors.gray[3],
+      })}
+    >
+      <Stack justify="space-between" h={'100%'} my={'md'}>
+        <Navbar.Section>
+          <Stack justify="center" align="center" spacing={'md'} mt={'md'}>
+            <Box onClick={() => createServerModal.openModal()} sx={sx} p={'md'}>
+              <IconPlus color="green" size={rem(35)} />
+            </Box>
+            <Box onClick={() => joinServerModal.openModal()} sx={sx} p={'md'}>
+              <IconMessage size={rem(35)} />
+            </Box>
+            <Divider orientation="horizontal" w={'100%'} size={'md'} />
+            {loadingServers ? (
+              <Center>
+                <IconFingerprint size={rem(40)} />
+              </Center>
+            ) : (
+              <ScrollArea h={'50vh'}>
+                {servers?.map((server) => (
+                  <Tooltip
+                    w={rem(60)}
+                    withArrow
+                    key={server.id}
+                    label={server.name}
+                    transitionProps={{ duration: 0 }}
+                  >
+                    <Box
+                      my={'md'}
+                      w={rem(80)}
+                      component="button"
+                      sx={sx}
+                      h={rem(80)}
+                    >
+                      <Link to={`/server/${server.id}`}>
+                        <Avatar
+                          src={server.imageUrl ? server.imageUrl : null}
+                          radius={100}
+                          size={'md'}
+                        />
+                      </Link>
+                    </Box>
+                  </Tooltip>
+                ))}{' '}
+              </ScrollArea>
+            )}
+          </Stack>
+        </Navbar.Section>
+        <Navbar.Section>
+          <Stack justify="center" align="center" spacing={'md'}>
+            {links}
+            <UserButton />
+          </Stack>
+        </Navbar.Section>
       </Stack>
-      <Stack justify="center" align="center">
-        <Button
-          className={classes.link}
-          variant="subtle"
-          onClick={toggleColorScheme}
-          radius={100}
-          p={0}
-        >
-          {colorScheme === 'dark' ? (
-            <IconMoon radius={100} />
-          ) : (
-            <IconSun radius={100} />
-          )}
-        </Button>
-        <UserButton />
-      </Stack>
-    </nav>
+    </Navbar>
   );
 }

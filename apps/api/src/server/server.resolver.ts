@@ -2,55 +2,51 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { ApolloError } from 'apollo-server-express';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { join } from 'path';
 import { createWriteStream, existsSync, mkdirSync } from 'fs';
-import { Server } from './server.types';
-import { GraphqlAuthGuard } from '../auth/guards/auth.guard';
+import { Channel, Server } from './server.types';
+import { GraphqlAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ServerService } from './server.service';
-import { CreateServerDto } from './dto/create-server.dto';
-import { UpdateServerDto } from './dto/update-server.dto';
-import { CreateChannelOnServerDto } from './dto/create-channel-on-server.dto';
+import {
+  CreateServerDto,
+  CreateChannelOnServerDto,
+  ChangeMemberRoleDto,
+  DeleteMemberDto,
+  DeleteChannelFromServerDto,
+  DeleteServerDto,
+  FindChannelByIdDto,
+  LeaveServerDto,
+  UpdateServerDto,
+  UpdateChannelDto,
+} from './dto/index.dto';
 
-@UseGuards(GraphqlAuthGuard)
 @Resolver()
 export class ServerResolver {
   constructor(private readonly serverService: ServerService) {}
 
+  @UseGuards(GraphqlAuthGuard)
   @Query(() => [Server])
-  async getServers(@Context() ctx: { req: Request }) {
-    if (!ctx.req?.profile.email)
-      return new ApolloError('Profile not found', 'PROFILE_NOT_FOUND');
-
-    return this.serverService.getServersByProfileEmailOfMember(
-      ctx.req?.profile.email
-    );
-  }
-
-  @Query(() => Server)
-  async getServer(
-    @Args('id', { nullable: true }) id: number,
+  async getServerByProfileIdOfMember(
+    @Args('profileId') profileId: number,
     @Context() ctx: { req: Request }
   ) {
-    if (!ctx.req?.profile.email)
-      return new ApolloError('Profile not found', 'PROFILE_NOT_FOUND');
-    return this.serverService.getServer(id, ctx.req?.profile.email);
+    return this.serverService.getServerByProfileIdOfMember(
+      ctx.req.profile.email
+    );
   }
 
   @Mutation(() => Server)
   async createServer(
     @Args('input') input: CreateServerDto,
     @Args('file', { type: () => GraphQLUpload, nullable: true })
-    file: GraphQLUpload
+    file: GraphQLUpload.FileUpload
   ) {
-    if (!file) throw new ApolloError('Image is required');
     const imageUrl = await this.storeImageAndReturnUrl(file);
-
     return this.serverService.createServer(input, imageUrl);
   }
 
-  private async storeImageAndReturnUrl(file: GraphQLUpload) {
+  async storeImageAndReturnUrl(file: GraphQLUpload) {
     const { createReadStream, filename } = await file;
     const uniqueFilename = `${uuidv4()}_${filename}`;
     const imagePath = join(process.cwd(), 'public', 'images', uniqueFilename);
@@ -64,86 +60,124 @@ export class ServerResolver {
     return imageUrl;
   }
 
-  @Mutation(() => Server)
-  async updateServer(
-    @Args('input') input: UpdateServerDto,
-    @Args('file', { type: () => GraphQLUpload, nullable: true })
-    file: GraphQLUpload
+  @UseGuards(GraphqlAuthGuard)
+  @Query(() => Server)
+  async getServerById(
+    @Args('id') id: number,
+    @Context() ctx: { req: Request }
   ) {
-    let imageUrl;
-    if (file) {
-      imageUrl = await this.storeImageAndReturnUrl(file);
-    }
-
-    try {
-      return this.serverService.updateServer(input, imageUrl);
-    } catch (error) {
-      return new ApolloError(error.message, error.code);
-    }
+    return this.serverService.getServerById(id, ctx.req?.profile.email);
   }
 
+  @UseGuards(GraphqlAuthGuard)
   @Mutation(() => Server)
   async updateServerWithNewInviteCode(
     @Args('serverId', { nullable: true }) serverId: number
   ) {
-    if (!serverId)
-      throw new ApolloError('Server id is required', 'SERVER_ID_REQUIRED');
-    try {
-      return this.serverService.updateServerWithNewInviteCode(serverId);
-    } catch (error) {
-      return new ApolloError(error.message, error.code);
-    }
+    return this.serverService.updateServerWithNewInviteCode(serverId);
+  }
+
+  @UseGuards(GraphqlAuthGuard)
+  @Mutation(() => Server)
+  async addMemberToServer(
+    @Args('inviteCode') inviteCode: string,
+    @Context() ctx: { req: Request }
+  ) {
+    return this.serverService.addMemberToServer(
+      inviteCode,
+      ctx.req?.profile.email
+    );
+  }
+
+  @UseGuards(GraphqlAuthGuard)
+  @Mutation(() => Server)
+  async updateServer(
+    @Args('input') input: UpdateServerDto,
+    @Args('file', { type: () => GraphQLUpload, nullable: true })
+    file: GraphQLUpload.FileUpload
+  ) {
+    let imageUrl = null;
+    if (file) imageUrl = await this.storeImageAndReturnUrl(file);
+    return this.serverService.updateServer(input, imageUrl);
+  }
+
+  @UseGuards(GraphqlAuthGuard)
+  @Mutation(() => Server)
+  async changeMemberRole(
+    @Args('input') input: ChangeMemberRoleDto,
+    @Context() ctx: { req: Request }
+  ) {
+    return this.serverService.changeMemberRole(input, ctx.req?.profile.email);
   }
 
   @Mutation(() => Server)
-  async createChannel(
+  async deleteMemberFromServer(
+    @Args('input') input: DeleteMemberDto,
+    @Context() ctx: { req: Request }
+  ) {
+    return this.serverService.deleteMemberFromServer(
+      input,
+      ctx.req?.profile.email
+    );
+  }
+
+  @UseGuards(GraphqlAuthGuard)
+  @Mutation(() => Server)
+  async createChannelOnServer(
     @Args('input') input: CreateChannelOnServerDto,
     @Context() ctx: { req: Request }
   ) {
-    try {
-      return this.serverService.createChannel(input, ctx.req?.profile.email);
-    } catch (error) {
-      return new ApolloError(error.message, error.code);
-    }
+    return this.serverService.createChannelOnServer(
+      input,
+      ctx.req?.profile.email
+    );
   }
 
-  @Mutation(() => String)
-  async leaveServer(
-    @Args('serverId', { nullable: true }) serverId: number,
-    @Context() ctx: { req: Request }
-  ) {
-    try {
-      await this.serverService.leaveServer(serverId, ctx.req?.profile.email);
-      return 'Success';
-    } catch (error) {
-      return new ApolloError(error.message, error.code);
-    }
-  }
-
+  @UseGuards(GraphqlAuthGuard)
   @Mutation(() => String)
   async deleteServer(
-    @Args('serverId', { nullable: true }) serverId: number,
+    @Args('input') input: DeleteServerDto,
     @Context() ctx: { req: Request }
   ) {
-    try {
-      return this.serverService.deleteServer(serverId, ctx.req?.profile.email);
-    } catch (error) {
-      return new ApolloError(error.message, error.code);
-    }
+    return this.serverService.deleteServer(input, ctx.req?.profile.email);
   }
 
+  @UseGuards(GraphqlAuthGuard)
   @Mutation(() => String)
-  async deleteChannelFromServer(
-    @Args('channelId', { nullable: true }) channelId: number,
+  async leaveServer(
+    @Args('input') input: LeaveServerDto,
     @Context() ctx: { req: Request }
   ) {
-    try {
-      return this.serverService.deleteChannelFromServer(
-        channelId,
-        ctx.req?.profile.email
-      );
-    } catch (error) {
-      return new ApolloError(error.message, error.code);
-    }
+    return this.serverService.leaveServer(input, ctx.req?.profile.email);
+  }
+
+  @UseGuards(GraphqlAuthGuard)
+  @Mutation(() => String)
+  async deleteChannelFromServer(
+    @Args('input') input: DeleteChannelFromServerDto,
+    @Context() ctx: { req: Request }
+  ) {
+    return this.serverService.deleteChannelFromServer(
+      input,
+      ctx.req?.profile.email
+    );
+  }
+
+  @UseGuards(GraphqlAuthGuard)
+  @Mutation(() => Channel)
+  async updateChannel(
+    @Args('input') input: UpdateChannelDto,
+    @Context() ctx: { req: Request }
+  ) {
+    return this.serverService.updateChannel(input, ctx.req?.profile.email);
+  }
+
+  @UseGuards(GraphqlAuthGuard)
+  @Query(() => Channel)
+  async getChannelById(
+    @Args('input') input: FindChannelByIdDto,
+    @Context() ctx: { req: Request }
+  ) {
+    return this.serverService.getChannelById(input, ctx.req?.profile.email);
   }
 }

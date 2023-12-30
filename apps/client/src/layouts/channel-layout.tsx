@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom';
-import { MobileSidebar } from '../components/navigation/mobile-sidebar';
+import { MobileSidebar } from '../components/navigation';
 
 export function ChannelLayout() {
   return (
     <>
-      <MobileSidebar />
+      <MobileSidebar type="channel" />
       <Outlet />
     </>
   );

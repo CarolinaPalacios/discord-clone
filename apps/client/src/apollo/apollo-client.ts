@@ -1,8 +1,11 @@
+import { WebSocketLink } from '@apollo/link-ws';
+import { InMemoryCache } from '@apollo/client/cache';
 import { setContext } from '@apollo/client/link/context';
 import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';
-import { ApolloClient, InMemoryCache } from '@apollo/client/core';
+import { ApolloClient, ApolloLink, split } from '@apollo/client/core';
 import { onError } from '@apollo/client/link/error';
 import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev';
+import { getMainDefinition } from '@apollo/client/utilities';
 
 loadDevMessages();
 loadErrorMessages();
@@ -23,7 +26,20 @@ const authLink = setContext(async (_, { headers }) => {
   };
 });
 
-//TODO websocket link
+const wsLink = new WebSocketLink({
+  uri: 'ws://localhost:3000/graphql',
+  options: {
+    connectionParams: () => {
+      const token = getToken('__session');
+      if (token)
+        return { headers: { authorization: { token: `Bearer ${token}` } } };
+    },
+    connectionCallback(error, result) {
+      if (error) console.log(error);
+      if (result) console.log(result);
+    },
+  },
+});
 
 const uploadLink = createUploadLink({
   uri: 'http://localhost:3000/graphql',
@@ -45,12 +61,34 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 });
 
-//TODO slipt for websockets and http
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  ApolloLink.from([errorLink, authLink, uploadLink])
+);
 
-const cache = new InMemoryCache();
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        getMessages: {
+          merge(existing, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+  },
+});
 
 const client = new ApolloClient({
-  link: errorLink.concat(authLink.concat(uploadLink)),
+  link: splitLink,
   cache,
 });
 

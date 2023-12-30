@@ -16,14 +16,18 @@ export class ProfileService {
       return profile;
     }
     return this.prisma.profile.create({
-      data: createProfileDto,
+      data: {
+        name: createProfileDto.name,
+        email: createProfileDto.email,
+        imageUrl: createProfileDto.imageUrl,
+      },
     });
   }
 
-  async getProfileById(id: number) {
+  async getProfileById(profileId: number) {
     return this.prisma.profile.findUnique({
       where: {
-        id,
+        id: profileId,
       },
       include: {
         servers: {

@@ -1,82 +1,29 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UseFilters } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { ApolloError } from 'apollo-server-express';
+import { MemberRole, Profile } from '@prisma/client';
+import { GraphQLErrorFilter } from '../filters/custom-exetion-filters';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateServerDto } from './dto/create-server.dto';
-import { MemberRole } from '../member/member.types';
-import { UpdateServerDto } from './dto/update-server.dto';
-import { CreateChannelOnServerDto } from './dto/create-channel-on-server.dto';
+import {
+  ChangeMemberRoleDto,
+  CreateChannelOnServerDto,
+  CreateServerDto,
+  DeleteChannelFromServerDto,
+  DeleteMemberDto,
+  DeleteServerDto,
+  FindChannelByIdDto,
+  LeaveServerDto,
+  UpdateChannelDto,
+  UpdateServerDto,
+} from './dto/index.dto';
 import { ChannelType } from './server.types';
 
 @Injectable()
 export class ServerService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createServer(input: CreateServerDto, imageUrl: string) {
-    const profile = await this.prisma.profile.findUnique({
-      where: {
-        id: input.profileId,
-      },
-    });
-    if (!profile) throw new BadRequestException('Profile does not exist');
-
-    return this.prisma.server.create({
-      data: {
-        ...input,
-        imageUrl,
-        inviteCode: uuidv4(),
-        channels: {
-          create: [
-            {
-              name: 'general',
-              profileId: profile.id,
-            },
-          ],
-        },
-        members: {
-          create: [
-            {
-              profileId: profile.id,
-              role: MemberRole.ADMIN,
-            },
-          ],
-        },
-      },
-      include: {
-        members: true,
-      },
-    });
-  }
-
-  async getServer(id: number, email: string) {
-    const profile = await this.prisma.profile.findUnique({
-      where: {
-        email,
-      },
-    });
-    if (!profile)
-      return new ApolloError('Profile does not exist', ' PROFILE_NOT_FOUND');
-    const server = await this.prisma.server.findFirst({
-      where: {
-        id,
-        members: {
-          some: {
-            profileId: profile.id,
-          },
-        },
-      },
-      include: {
-        channels: true,
-        members: true,
-      },
-    });
-    if (!server)
-      return new ApolloError('Server does not exist', 'SERVER_NOT_FOUND');
-    return server;
-  }
-
-  async getServersByProfileEmailOfMember(email: string) {
-    return await this.prisma.server.findMany({
+  async getServerByProfileIdOfMember(email: string) {
+    return this.prisma.server.findMany({
       where: {
         members: {
           some: {
@@ -89,6 +36,73 @@ export class ServerService {
     });
   }
 
+  async createServer(createServerDto: CreateServerDto, imageUrl: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        id: createServerDto.profileId,
+      },
+    });
+    if (!profile)
+      throw new BadRequestException({ profile: 'Profile does not exist' });
+
+    return this.prisma.server.create({
+      data: {
+        name: createServerDto.name,
+        inviteCode: uuidv4(),
+        imageUrl,
+        profileId: profile.id,
+        channels: {
+          create: [
+            {
+              name: 'general',
+              profileId: createServerDto.profileId,
+            },
+          ],
+        },
+        members: {
+          create: [
+            {
+              profileId: createServerDto.profileId,
+              role: MemberRole.ADMIN,
+            },
+          ],
+        },
+      },
+    });
+  }
+
+  async getServerById(id: number, email: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!profile)
+      return new ApolloError('Profile does not exist', ' PROFILE_NOT_FOUND');
+    const server = await this.prisma.server.findUnique({
+      where: {
+        id,
+        members: {
+          some: {
+            profileId: profile.id,
+          },
+        },
+      },
+      include: {
+        channels: true,
+        profile: true,
+        members: {
+          include: {
+            profile: true,
+          },
+        },
+      },
+    });
+    if (!server)
+      return new ApolloError('Server does not exist', 'SERVER_NOT_FOUND');
+    return server;
+  }
+
   async updateServerWithNewInviteCode(serverId: number) {
     const server = await this.prisma.server.findUnique({
       where: {
@@ -96,11 +110,11 @@ export class ServerService {
       },
     });
     if (!server)
-      return new ApolloError('Server does not exist', 'SERVER_NOT_FOUND');
+      return new BadRequestException({ server: 'Server does not exist' });
 
     return this.prisma.server.update({
       where: {
-        id: serverId,
+        id: server.id,
       },
       data: {
         inviteCode: uuidv4(),
@@ -108,10 +122,56 @@ export class ServerService {
     });
   }
 
-  async updateServer(input: UpdateServerDto, imageUrl: string) {
+  @UseFilters(GraphQLErrorFilter)
+  async addMemberToServer(inviteCode: string, email: string) {
+    const server = await this.prisma.server.findUniqueOrThrow({
+      where: {
+        inviteCode,
+      },
+    });
+    if (!server)
+      return new ApolloError(
+        'Invalid server invite code',
+        'INVALID_INVITE_CODE'
+      );
+
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!profile)
+      return new ApolloError('Profile does not exist', 'PROFILE_NOT_FOUND');
+
+    const member = await this.prisma.member.findFirst({
+      where: {
+        profileId: profile.id,
+        serverId: server.id,
+      },
+    });
+    if (member)
+      return new ApolloError('Member already exists', 'MEMBER_ALREADY_EXISTS');
+
+    return this.prisma.server.update({
+      where: {
+        inviteCode,
+      },
+      data: {
+        members: {
+          create: [
+            {
+              profileId: profile.id,
+            },
+          ],
+        },
+      },
+    });
+  }
+
+  async updateServer(updateServerDto: UpdateServerDto, imageUrl: string) {
     const server = await this.prisma.server.findUnique({
       where: {
-        id: input.serverId,
+        id: updateServerDto.serverId,
       },
     });
     if (!server)
@@ -121,15 +181,97 @@ export class ServerService {
         id: server.id,
       },
       data: {
-        name: input.name,
+        name: updateServerDto.name,
         imageUrl,
       },
     });
   }
 
-  async createChannel(input: CreateChannelOnServerDto, email: string) {
-    if (!input.name) throw new Error('Channel name is required');
+  async changeMemberRole(input: ChangeMemberRoleDto, email: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { email },
+    });
+    if (!profile)
+      return new ApolloError('Profile does not exist', 'PROFILE_NOT_FOUND');
 
+    const member = await this.prisma.member.findUniqueOrThrow({
+      where: { id: input.memberId },
+    });
+    if (!member)
+      return new ApolloError('Member does not exist', 'MEMBER_NOT_FOUND');
+
+    await this.prisma.member.update({
+      where: {
+        id: member.id,
+        NOT: {
+          profileId: member.id,
+        },
+      },
+      data: {
+        role: MemberRole[input.role],
+      },
+    });
+
+    const server = await this.prisma.server.findUnique({
+      where: {
+        id: member.serverId,
+      },
+      include: {
+        members: true,
+      },
+    });
+    if (!server)
+      return new ApolloError('Server does not exist', 'SERVER_NOT_FOUND');
+
+    return server;
+  }
+
+  async deleteMemberFromServer(input: DeleteMemberDto, email: string) {
+    let profile: Profile;
+    try {
+      profile = await this.prisma.profile.findUniqueOrThrow({
+        where: { email },
+      });
+    } catch (error) {
+      return new ApolloError('Profile does not exist', 'PROFILE_NOT_FOUND');
+    }
+
+    const member = await this.prisma.member.findUnique({
+      where: { id: input.memberId },
+    });
+    if (!member)
+      return new ApolloError('Member does not exist', 'MEMBER_NOT_FOUND');
+    if (!profile)
+      return new ApolloError('Profile does not exist', 'PROFILE_NOT_FOUND');
+
+    await this.prisma.member.delete({
+      where: {
+        id: member.id,
+        NOT: {
+          profileId: profile.id,
+        },
+      },
+    });
+
+    const server = await this.prisma.server.findUnique({
+      where: {
+        id: member.serverId,
+      },
+      include: {
+        members: {
+          include: {
+            profile: true,
+          },
+        },
+      },
+    });
+    if (!server)
+      return new ApolloError('Server does not exist', 'SERVER_NOT_FOUND');
+
+    return server;
+  }
+
+  async createChannelOnServer(input: CreateChannelOnServerDto, email: string) {
     const profile = await this.prisma.profile.findUnique({
       where: {
         email,
@@ -162,29 +304,7 @@ export class ServerService {
     });
   }
 
-  async leaveServer(serverId: number, email: string) {
-    const profile = await this.prisma.profile.findUnique({
-      where: {
-        email,
-      },
-    });
-    if (!profile)
-      return new ApolloError('Profile does not exist', 'PROFILE_NOT_FOUND');
-    return this.prisma.server.update({
-      where: {
-        id: serverId,
-      },
-      data: {
-        members: {
-          deleteMany: {
-            profileId: profile.id,
-          },
-        },
-      },
-    });
-  }
-
-  async deleteServer(serverId: number, email: string) {
+  async deleteServer(input: DeleteServerDto, email: string) {
     const profile = await this.prisma.profile.findUnique({
       where: {
         email,
@@ -195,7 +315,7 @@ export class ServerService {
 
     const server = await this.prisma.server.findUnique({
       where: {
-        id: serverId,
+        id: input.serverId,
         members: {
           some: {
             profileId: profile.id,
@@ -218,7 +338,34 @@ export class ServerService {
     return 'Server deleted successfully';
   }
 
-  async deleteChannelFromServer(channelId: number, email: string) {
+  async leaveServer(input: LeaveServerDto, email: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!profile)
+      return new ApolloError('Profile does not exist', 'PROFILE_NOT_FOUND');
+    await this.prisma.server.update({
+      where: {
+        id: input.serverId,
+      },
+      data: {
+        members: {
+          deleteMany: {
+            profileId: profile.id,
+          },
+        },
+      },
+    });
+
+    return 'Server left successfully';
+  }
+
+  async deleteChannelFromServer(
+    input: DeleteChannelFromServerDto,
+    email: string
+  ) {
     const profile = await this.prisma.profile.findUnique({
       where: {
         email,
@@ -229,7 +376,7 @@ export class ServerService {
 
     const channel = await this.prisma.channel.findUnique({
       where: {
-        id: channelId,
+        id: input.channelId,
         profileId: profile.id,
         NOT: {
           name: 'general',
@@ -246,5 +393,58 @@ export class ServerService {
     });
 
     return 'Channel deleted successfully';
+  }
+
+  async updateChannel(input: UpdateChannelDto, email: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { email },
+    });
+    if (!profile)
+      return new ApolloError('Profile does not exist', 'PROFILE_NOT_FOUND');
+
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        id: input.channelId,
+        profileId: profile.id,
+        NOT: {
+          name: 'general',
+        },
+      },
+    });
+    if (!channel)
+      return new ApolloError('Channel does not exist', 'CHANNEL_NOT_FOUND');
+
+    return await this.prisma.channel.update({
+      where: {
+        id: channel.id,
+      },
+      data: {
+        name: input.name,
+        type: ChannelType[input.type],
+      },
+    });
+  }
+
+  async getChannelById(input: FindChannelByIdDto, email: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { email },
+    });
+    if (!profile)
+      return new ApolloError('Profile does not exist', 'PROFILE_NOT_FOUND');
+
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        id: input.channelId,
+        serverId: input.serverId,
+      },
+      include: {
+        messages: true,
+        profile: true,
+      },
+    });
+    if (!channel)
+      return new ApolloError('Channel does not exist', 'CHANNEL_NOT_FOUND');
+
+    return channel;
   }
 }

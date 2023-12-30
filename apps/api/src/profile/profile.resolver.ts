@@ -1,9 +1,9 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Profile } from './profile.types';
-import { CreateProfileDto } from './dto/create-profile.dto';
-import { ProfileService } from './profile.service';
 import { UseGuards } from '@nestjs/common';
-import { GraphqlAuthGuard } from '../auth/guards/auth.guard';
+import { ProfileService } from './profile.service';
+import { GraphqlAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CreateProfileDto } from './dto/create-profile.dto';
+import { Profile } from './profile.types';
 
 @Resolver()
 export class ProfileResolver {

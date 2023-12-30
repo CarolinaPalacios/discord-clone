@@ -1,31 +1,33 @@
-import { Drawer, rem } from '@mantine/core';
-import { useGeneralStore } from '../../stores/general-store';
+import { Drawer } from '@mantine/core';
+import { useGeneralStore } from '../../stores';
 import { Sidebar } from './sidebar';
-import { ServerSidebar } from './server-sidebar';
+import { ServerSidebar } from '../server';
+import { ChatHeader } from './chat-header';
 
-export function MobileSidebar() {
+interface MobileSidebarProps {
+  type: 'channel' | 'conversation';
+}
+
+export function MobileSidebar({ type }: MobileSidebarProps) {
   const { drawerOpen, toggleDrawer } = useGeneralStore();
 
   return (
-    <div>
+    <>
+      <ChatHeader opened={drawerOpen} toggle={toggleDrawer} type={type} />
       <Sidebar />
-
       <Drawer
-        padding="0"
-        mb="0"
+        mb={0}
         zIndex={10}
         opened={drawerOpen}
-        size={rem(320)}
-        h={rem(600)}
+        onClose={toggleDrawer}
+        size={'340px'}
         position="left"
         withOverlay={false}
         styles={{ root: { width: 0, height: 0, position: 'fixed' } }}
         withCloseButton={false}
-        ml={rem(80)}
-        onClose={toggleDrawer}
       >
         <ServerSidebar />
       </Drawer>
-    </div>
+    </>
   );
 }

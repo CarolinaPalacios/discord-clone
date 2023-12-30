@@ -14,10 +14,10 @@ export class Channel {
   @Field(() => ChannelType)
   type: ChannelType;
 
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   createdAt: string;
 
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   updatedAt: string;
 
   @Field(() => [Member], { nullable: true })
@@ -40,24 +40,24 @@ export class Server {
   @Field()
   id: number;
 
-  @Field()
+  @Field({ nullable: true })
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   imageUrl: string;
 
   @Field({ nullable: true })
   inviteCode: string;
 
-  @Field()
+  @Field({ nullable: true })
   profileId: number;
 
-  @Field(() => Profile, { nullable: true })
+  @Field(() => Profile)
   profile: Profile;
 
-  @Field(() => [Member], { nullable: 'itemsAndList' })
+  @Field(() => [Member], { nullable: true })
   members: Member[];
 
-  @Field(() => [Channel])
+  @Field(() => [Channel], { nullable: true })
   channels: Channel[];
 }

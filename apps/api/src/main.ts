@@ -1,5 +1,5 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { Logger } from '@nestjs/common';
+import { BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
@@ -22,6 +22,22 @@ async function bootstrap() {
     ],
     credentials: true,
   });
+  app.use(graphqlUploadExpress({ maxFileSize: 10000000000, maxFiles: 1 }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      exceptionFactory: (errors) => {
+        const formattedErrors = errors.reduce((accumulator, error) => {
+          accumulator[error.property] = Object.values(error.constraints).join(
+            ', '
+          );
+          return accumulator;
+        }, {});
+
+        throw new BadRequestException(formattedErrors);
+      },
+    })
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Discord clone API')
@@ -36,7 +52,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }));
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(

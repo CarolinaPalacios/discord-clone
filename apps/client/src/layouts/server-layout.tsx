@@ -1,11 +1,16 @@
 import { Outlet } from 'react-router-dom';
-import { ServerSidebar } from '../components/navigation/server-sidebar';
+import { Flex } from '@mantine/core';
+import { Sidebar } from '../components/navigation';
+import { ServerSidebar, ServerSearch } from '../components/server';
 
 export function ServerLayout() {
   return (
-    <div>
-      <ServerSidebar />
-      <Outlet />
-    </div>
+    <Flex>
+      <ServerSearch>
+        <Sidebar />
+        <ServerSidebar />
+        <Outlet />
+      </ServerSearch>
+    </Flex>
   );
 }

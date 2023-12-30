@@ -9,7 +9,7 @@ export class CreateChannelOnServerDto {
   name: string;
 
   @IsInt()
-  @Field({ nullable: true })
+  @Field()
   serverId: number;
 
   @IsEnum(ChannelType)

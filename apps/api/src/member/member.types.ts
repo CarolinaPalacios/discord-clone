@@ -4,19 +4,19 @@ import { Server } from '../server/server.types';
 
 @ObjectType()
 export class Member {
-  @Field()
+  @Field({ nullable: true })
   id: number;
 
   @Field(() => Profile, { nullable: true })
   profile: Profile;
 
-  @Field()
+  @Field({ nullable: true })
   profileId: number;
 
   @Field(() => Server, { nullable: true })
   server: Server;
 
-  @Field(() => MemberRole)
+  @Field(() => MemberRole, { nullable: true })
   role: MemberRole;
 
   @Field({ nullable: true })
@@ -43,5 +43,5 @@ export enum MemberRole {
 
 registerEnumType(MemberRole, {
   name: 'MemberRole',
-  description: 'Defines the role of a member on a server',
+  description: 'Define the role of a member in a server',
 });

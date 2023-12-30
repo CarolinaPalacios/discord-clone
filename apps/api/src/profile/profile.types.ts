@@ -3,7 +3,7 @@ import { Channel, Server } from '../server/server.types';
 
 @ObjectType()
 export class Profile {
-  @Field()
+  @Field({ nullable: true })
   id: number;
 
   @Field({ nullable: true })
@@ -15,7 +15,7 @@ export class Profile {
   @Field(() => [Server], { nullable: true })
   servers: Server[];
 
-  @Field()
+  @Field({ nullable: true })
   imageUrl: string;
 
   @Field(() => [Channel], { nullable: true })
