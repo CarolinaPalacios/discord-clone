@@ -7,7 +7,7 @@ interface WelcomeMessageProps {
 }
 export function WelcomeMessage({ type, name }: WelcomeMessageProps) {
   return (
-    <Flex justify={'end'} align={'start'} direction={'column'} p="lg">
+    <Flex align={'start'} direction={'column'} p="md">
       <Box
         sx={(theme) => ({
           backgroundColor:
@@ -15,16 +15,17 @@ export function WelcomeMessage({ type, name }: WelcomeMessageProps) {
               ? theme.colors.dark[5]
               : theme.colors.gray[5],
           textAlign: 'center',
-          margin: '0px',
-          borderRadius: 100,
-          padding: theme.spacing.sm,
+          marginBottom: '30px',
+          borderRadius: '50%',
+          padding: theme.spacing.md,
           cursor: 'pointer',
+          marginTop: '20px',
         })}
       >
-        <IconHash size={40} radius={'100'} />
+        <IconHash size={50} />
       </Box>
-      <Text size="xl" fw={700}>
-        {type === 'channel' ? `Welcome to ${name}` : ``}
+      <Text size="xl" fw={700} c={'dimmed'}>
+        {type === 'channel' ? `Welcome to #${name}` : ``}
       </Text>
       <Text c="dimmed">
         {type === 'channel'

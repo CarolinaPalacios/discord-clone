@@ -29,8 +29,7 @@ export function TextInputSection({
 
   return (
     <Flex
-      ml="lg"
-      mr="lg"
+      ml="115px"
       w={'100%'}
       id="input-section"
       justify={'center'}
@@ -38,13 +37,18 @@ export function TextInputSection({
       direction={isSmallerThanLarge ? 'column' : 'row'}
     >
       <TextInput
-        mr="md"
-        w="80%"
+        w="100%"
         placeholder={'Message'}
         {...form.getInputProps('content')}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            onSend(form.values.content);
+            form.reset();
+          }
+        }}
       />
       <Flex
-        w={'30%'}
+        w={'20%'}
         mt={isSmallerThanLarge ? 'md' : '0'}
         justify={'center'}
         align={'center'}
@@ -102,7 +106,10 @@ export function TextInputSection({
             radius={100}
             variant="light"
             size={isSmallerThanLarge ? '20' : '25'}
-            onClick={() => onSend(form.values.content)}
+            onClick={() => {
+              onSend(form.values.content);
+              form.reset();
+            }}
           >
             <IconCubeSend size={isSmallerThanLarge ? '20' : '25'} />
           </Button>

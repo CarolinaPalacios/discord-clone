@@ -18,7 +18,6 @@ export function ServerSidebarSection({
 }: ServerSidebarSectionProps) {
   const channelModel = useModal('CreateChannel');
   const manageMembersModel = useModal('ManageMembers');
-
   const setChannelType = useGeneralStore(
     (state) => state.setChannelTypeForCreateChannelModal
   );
@@ -34,7 +33,7 @@ export function ServerSidebarSection({
           <Flex justify={'space-between'} w="100%">
             {' '}
             <Flex>
-              <Text style={{ color: 'grey', fontSize: 12, fontWeight: 'bold' }}>
+              <Text style={{ color: 'grey', fontSize: 14, fontWeight: 'bold' }}>
                 {label.toUpperCase()}
               </Text>{' '}
             </Flex>
@@ -54,7 +53,9 @@ export function ServerSidebarSection({
       >
         <Flex py="md" px={'md'} style={{ cursor: 'pointer' }}>
           <Flex justify={'space-between'} w="100%">
-            <Text>{label}</Text>
+            <Text style={{ color: 'grey', fontSize: 14, fontWeight: 'bold' }}>
+              {label.toUpperCase()}
+            </Text>
           </Flex>
           <IconSettings />
         </Flex>

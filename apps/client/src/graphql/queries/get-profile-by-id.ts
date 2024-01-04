@@ -9,15 +9,11 @@ export const GET_PROFILE_BY_ID = gql`
       servers {
         id
         name
-        profile {
-          name
-          id
-        }
-        channels {
-          id
-          name
-          type
-        }
+      }
+      channels {
+        id
+        name
+        type
       }
     }
   }

@@ -23,7 +23,7 @@ export function ServerSidebar() {
 
   return (
     <Navbar
-      w={rem(260)}
+      w={rem(270)}
       ml={rem(80)}
       zIndex={1}
       pos={'fixed'}
@@ -40,7 +40,7 @@ export function ServerSidebar() {
         <Stack>
           <ServerHeader role={role ?? undefined} server={server} />
           <SpotLightTrigger />
-          <ScrollArea>
+          <ScrollArea h={'calc(100vh - 200px)'}>
             {!!textChannels.length && (
               <ServerSidebarSection
                 sectionType="channels"

@@ -33,6 +33,7 @@ export function MediaRoom({ chatId, audio, video }: MediaRoomProps) {
       data-lk-theme="default"
       style={{
         height: 'calc(80vh - 60px)',
+        marginTop: '60px',
       }}
     >
       <MyVideoConference />

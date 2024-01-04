@@ -30,8 +30,6 @@ export function useConversationData({ memberId }: UseConversationArgs) {
     },
   });
 
-  console.log(dataGetMemberByProfileId?.getMemberByProfileId.id, memberId);
-
   const [getOrCreateConversation, { data: dataConversation }] = useMutation<
     GetOrCreateConversationMutation,
     GetOrCreateConversationMutationVariables

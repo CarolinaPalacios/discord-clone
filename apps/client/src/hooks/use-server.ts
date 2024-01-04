@@ -31,6 +31,9 @@ export function useServer() {
     variables: {
       profileId: Number(profile?.id),
     },
+    onError: (error) => {
+      console.log(error);
+    },
     skip: !profile?.id,
   });
 

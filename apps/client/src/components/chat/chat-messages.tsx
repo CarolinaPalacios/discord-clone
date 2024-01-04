@@ -1,6 +1,6 @@
 import { ScrollArea, Stack } from '@mantine/core';
 
-import { MessageUnion } from '../../gql/graphql';
+import { ChannelType, MessageUnion } from '../../gql/graphql';
 import { ChatMessage } from './chat-message';
 import { WelcomeMessage } from './welcome-message';
 import {
@@ -32,8 +32,9 @@ export function ChatMessages({ channelId, messages }: ChatMessagesProps) {
         h={
           channel?.name === 'general' && isSmallerThanLarge
             ? 'calc(100vh - 280px)'
-            : 'calc(100vh - 280px)'
+            : 'calc(100vh - 180px)'
         }
+        ml={channel?.type !== ChannelType.Text ? '20px' : '100px'}
         viewportRef={viewport}
       >
         {member?.profile?.name && (
@@ -42,8 +43,15 @@ export function ChatMessages({ channelId, messages }: ChatMessagesProps) {
         {channel?.name && (
           <WelcomeMessage type={'channel'} name={channel?.name} />
         )}
-        {messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
+        {messages.map((message, index) => (
+          <ChatMessage
+            key={message.id}
+            message={message}
+            showUserInfo={
+              index === 0 ||
+              message.member?.id !== messages[index - 1]?.member?.id
+            }
+          />
         ))}
       </ScrollArea>
     </Stack>

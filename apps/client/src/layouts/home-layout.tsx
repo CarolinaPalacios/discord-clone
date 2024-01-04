@@ -28,17 +28,23 @@ if (!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
 
 export function HomeLayout() {
   const profile = useProfileStore((state) => state.profile);
+  console.log('profile', profile);
   const setProfile = useProfileStore((state) => state.setProfile);
 
-  useQuery<GetProfileByIdQuery>(GET_PROFILE_BY_ID, {
+  const profileData = useQuery<GetProfileByIdQuery>(GET_PROFILE_BY_ID, {
     variables: {
       profileId: profile?.id,
     },
     skip: !profile?.id,
     onCompleted: (data) => {
+      console.log(data);
       setProfile(data.getProfileById);
     },
+    onError: (error) => {
+      console.log(error);
+    },
   });
+  console.log(profileData);
 
   return (
     <Flex w="100vw" justify={'center'} h={'100vh'} align={'center'}>

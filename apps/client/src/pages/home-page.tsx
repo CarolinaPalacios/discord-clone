@@ -8,6 +8,7 @@ import { useProfileStore } from '../stores';
 
 export function HomePage() {
   const { session } = useSession();
+  console.log({ session: session });
   const profile = useProfileStore((state) => state.profile);
 
   const [createProfile] = useMutation<CreateProfileMutation>(CREATE_PROFILE);
@@ -21,21 +22,25 @@ export function HomePage() {
           variables: {
             input: {
               email: session?.user.emailAddresses[0].emailAddress,
-              name: session?.user.username,
+              name: session?.user.fullName,
               imageUrl: session?.user.imageUrl,
             },
             skip: !session?.user.emailAddresses[0].emailAddress,
           },
           onCompleted: (data) => {
+            console.log({ data: data });
             setProfile(data.createProfile);
+          },
+          onError: (error) => {
+            console.error('Error creating user in backend:', error);
           },
         });
       } catch (error) {
         console.error('Error creating user in backend:', error);
       }
     };
-    if (profile?.id) return;
-    createProfileFn();
+
+    if (!profile?.id) createProfileFn();
   }, [
     session,
     setProfile,
@@ -46,5 +51,13 @@ export function HomePage() {
     createProfile,
   ]);
 
-  return <div></div>;
+  return (
+    <div>
+      <img src="/discord-logo-3-1.png" alt="Discord" width={'50%'} />
+      <h1>Welcome, {session?.user.fullName}!</h1>
+      <p>
+        You're logged in with {session?.user.emailAddresses[0].emailAddress}.
+      </p>
+    </div>
+  );
 }

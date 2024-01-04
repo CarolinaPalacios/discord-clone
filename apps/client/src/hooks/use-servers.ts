@@ -8,6 +8,7 @@ import { useProfileStore } from '../stores/profile-store';
 
 export function useServers() {
   const profile = useProfileStore((state) => state.profile);
+  console.log('profile', profile);
 
   const { data: dataServers, loading: loadingServers } = useQuery<
     GetServerByProfileIdOfMemberQuery,
@@ -18,6 +19,7 @@ export function useServers() {
     },
     skip: !profile?.id,
   });
+  console.log('dataServers', dataServers);
 
   return {
     servers: dataServers?.getServerByProfileIdOfMember,

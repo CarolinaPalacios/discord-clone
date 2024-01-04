@@ -29,10 +29,9 @@ const authLink = setContext(async (_, { headers }) => {
 const wsLink = new WebSocketLink({
   uri: 'ws://localhost:3000/graphql',
   options: {
-    connectionParams: () => {
-      const token = getToken('__session');
-      if (token)
-        return { headers: { authorization: { token: `Bearer ${token}` } } };
+    connectionParams: async () => {
+      const token = localStorage.getItem('clerk-db-jwt');
+      if (token) return { Authorization: token ? `Bearer ${token}` : '' };
     },
     connectionCallback(error, result) {
       if (error) console.log(error);
@@ -43,6 +42,7 @@ const wsLink = new WebSocketLink({
 
 const uploadLink = createUploadLink({
   uri: 'http://localhost:3000/graphql',
+  credentials: 'include',
   headers: {
     'apollo-require-preflight': 'true',
   },
@@ -73,23 +73,12 @@ const splitLink = split(
   ApolloLink.from([errorLink, authLink, uploadLink])
 );
 
-const cache = new InMemoryCache({
-  typePolicies: {
-    Query: {
-      fields: {
-        getMessages: {
-          merge(existing, incoming) {
-            return incoming;
-          },
-        },
-      },
-    },
-  },
-});
+const cache = new InMemoryCache();
 
 const client = new ApolloClient({
   link: splitLink,
   cache,
+  credentials: 'include',
 });
 
 export default client;

@@ -17,9 +17,9 @@ type ServerMemberProps = {
 };
 
 const roleIconMap = {
-  [MemberRole.Guest]: null,
-  [MemberRole.Moderator]: <IconShieldCheck size="15" />,
-  [MemberRole.Admin]: <IconCrown size="15" />,
+  [MemberRole.Moderator]: <IconShieldCheck color="blue" size={15} />,
+  [MemberRole.Admin]: <IconCrown color="green" size={15} />,
+  [MemberRole.Guest]: <IconShieldCheck color="gray" size={15} />,
 };
 
 export function ServerMember({ member, server, isActive }: ServerMemberProps) {
@@ -45,6 +45,7 @@ export function ServerMember({ member, server, isActive }: ServerMemberProps) {
           ? theme.colors.dark[8]
           : theme.colors.gray[6],
     },
+    width: '260px',
   });
 
   const roleIcon = member?.role != null ? roleIconMap[member?.role] : null;

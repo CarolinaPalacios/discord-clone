@@ -88,15 +88,15 @@ export function ChatWindow({
         align={'flex-end'}
         direction={'column'}
         pt="60px"
-        h="100vh"
+        h="95vh"
         w="calc(100vw - 80px)"
         miw="60vw"
       >
         <Paper
           m={0}
           p={0}
-          h="calc(100vh - 60px)"
-          w={drawerOpen ? 'calc(100% - 340px)' : 'calc(100% - 110px)'}
+          h="calc(100vh - 40px)"
+          w={drawerOpen ? 'calc(100% - 350px)' : 'calc(100% - 110px)'}
           sx={(theme) => ({
             backgroundColor:
               theme.colorScheme === 'dark'
@@ -116,7 +116,7 @@ export function ChatWindow({
                     <Flex w={isSmallerThanLg ? '100vw' : '50vw'}>
                       <MediaRoom chatId={chatName} audio={true} video={true} />
                     </Flex>
-                    {isSmallerThanLg && (
+                    {!isSmallerThanLg && (
                       <Flex
                         direction={'column'}
                         w={drawerOpen ? '26vw' : '40vw'}
@@ -145,7 +145,7 @@ export function ChatWindow({
                       <MediaRoom chatId={chatName} audio={true} video={false} />
                     </Flex>
                     {!isSmallerThanLg && (
-                      <Flex direction={'column'} w={'26vw'}>
+                      <Flex direction={'column'} w={'30vw'}>
                         <ChatMessages
                           messages={messages as MessageUnion[]}
                           channelId={channelId}

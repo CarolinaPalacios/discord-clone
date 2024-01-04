@@ -13,8 +13,8 @@ export function MessageButton({ onClick, type }: MessageButtonProps) {
       sx={(theme) => ({
         backgroundColor:
           theme.colorScheme === 'dark'
-            ? theme.colors.dark[7]
-            : theme.colors.gray[5],
+            ? theme.colors.dark[6]
+            : theme.colors.gray[4],
         borderRadius: theme.radius.xl,
         width: rem(20),
         height: rem(20),
@@ -41,7 +41,7 @@ export function MessageButton({ onClick, type }: MessageButtonProps) {
       })}
     >
       <Box className="icon" sx={{ transition: 'transform 0.2s ease' }}>
-        {type === 'delete' ? <IconTrash size="15" /> : <IconEdit size="15" />}
+        {type === 'delete' ? <IconTrash size="20" /> : <IconEdit size="20" />}
       </Box>
     </Box>
   );

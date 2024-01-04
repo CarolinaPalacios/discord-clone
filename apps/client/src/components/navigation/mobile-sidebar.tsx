@@ -20,7 +20,7 @@ export function MobileSidebar({ type }: MobileSidebarProps) {
         zIndex={10}
         opened={drawerOpen}
         onClose={toggleDrawer}
-        size={'340px'}
+        size={'350px'}
         position="left"
         withOverlay={false}
         styles={{ root: { width: 0, height: 0, position: 'fixed' } }}

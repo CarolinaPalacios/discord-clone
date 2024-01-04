@@ -20,9 +20,9 @@ interface ServerChannelProps {
 }
 
 const iconMap = {
-  [ChannelType.Text]: <IconHash size={15} />,
-  [ChannelType.Audio]: <IconMicrophone size={15} />,
-  [ChannelType.Video]: <IconCamera size={15} />,
+  [ChannelType.Text]: <IconHash size={20} />,
+  [ChannelType.Audio]: <IconMicrophone size={20} />,
+  [ChannelType.Video]: <IconCamera size={20} />,
 };
 
 export function ServerChannel({
@@ -86,7 +86,7 @@ export function ServerChannel({
         active={isActive}
         icon={Icon}
       >
-        {channel.name !== 'general' && role !== MemberRole.Guest && (
+        {channel.name !== 'general' && (
           <Stack>
             <NavLink
               sx={styles}
@@ -98,24 +98,29 @@ export function ServerChannel({
               label="Join"
               icon={<IconMessage style={{ marginLeft: '8px' }} size={20} />}
             />
-            <NavLink
-              sx={styles}
-              onClick={() => {
-                setChannelToBeDeletedOrUpdatedId(channel.id);
-                updateChannelModal.openModal();
-              }}
-              label="Edit"
-              icon={<IconEdit style={{ marginLeft: '8px' }} size={20} />}
-            />
-            <NavLink
-              sx={styles}
-              onClick={() => {
-                setChannelToBeDeletedOrUpdatedId(channel.id);
-                deleteChannelModal.openModal();
-              }}
-              label="Delete"
-              icon={<IconTrash style={{ marginLeft: '8px' }} size={20} />}
-            />
+            {role !== MemberRole.Guest && (
+              <NavLink
+                sx={styles}
+                onClick={() => {
+                  setChannelToBeDeletedOrUpdatedId(channel.id);
+                  updateChannelModal.openModal();
+                }}
+                label="Edit"
+                icon={<IconEdit style={{ marginLeft: '8px' }} size={20} />}
+              />
+            )}
+            {role === MemberRole.Admin && (
+              <NavLink
+                sx={styles}
+                onClick={() => {
+                  setChannelToBeDeletedOrUpdatedId(channel.id);
+                  deleteChannelModal.openModal();
+                }}
+                style={{ color: 'red' }}
+                label="Delete"
+                icon={<IconTrash style={{ marginLeft: '8px' }} size={20} />}
+              />
+            )}
           </Stack>
         )}
       </NavLink>

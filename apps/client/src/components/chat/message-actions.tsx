@@ -15,7 +15,7 @@ export function MessageActions({
   handleDeleteMessage,
 }: MessageActionsProps) {
   return (
-    <Flex id="actions" w="100%" justify="flex-start">
+    <Flex id="actions" justify="end">
       {canDeleteMessage && (
         <MessageButton type="delete" onClick={handleDeleteMessage} />
       )}

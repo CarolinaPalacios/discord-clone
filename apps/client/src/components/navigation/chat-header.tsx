@@ -6,7 +6,7 @@ import {
   Text,
   useMantineTheme,
 } from '@mantine/core';
-import { IconHash, IconMenu } from '@tabler/icons-react';
+import { IconHash, IconMenu2 } from '@tabler/icons-react';
 import { useMemberById, useServer } from '../../hooks';
 import { useGeneralStore } from '../../stores';
 
@@ -19,6 +19,7 @@ interface ChatHeaderProps {
 export function ChatHeader({ opened, toggle, type }: ChatHeaderProps) {
   const theme = useMantineTheme();
   const { server } = useServer();
+  console.log(server, ':server');
   const memberData = useMemberById();
   const { drawerOpen } = useGeneralStore((state) => state);
 
@@ -26,7 +27,7 @@ export function ChatHeader({ opened, toggle, type }: ChatHeaderProps) {
     <Paper
       style={{
         transition: 'margin-left 0.3s ease',
-        marginLeft: opened ? '340px' : '0',
+        marginLeft: opened ? '350px' : '10px',
       }}
       shadow="md"
       w={'100%'}
@@ -62,7 +63,7 @@ export function ChatHeader({ opened, toggle, type }: ChatHeaderProps) {
             height: '60%',
           }}
         >
-          <IconMenu />
+          <IconMenu2 />
         </Button>
         {type === 'channel' ? (
           <>

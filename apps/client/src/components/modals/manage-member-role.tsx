@@ -93,7 +93,7 @@ export function ManageMemberModal() {
       <Text size="sm" c="dimmed" mb="md">
         {server?.members?.length} Members
       </Text>
-      <ScrollArea style={{ height: 200 }} pt={'md'}>
+      <ScrollArea style={{ height: 250 }} pt={'md'}>
         {server?.members?.map((member) => {
           return (
             <Flex my="md" key={member?.id}>

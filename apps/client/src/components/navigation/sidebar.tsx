@@ -156,10 +156,10 @@ export function Sidebar() {
         <Navbar.Section>
           <Stack justify="center" align="center" spacing={'md'} mt={'md'}>
             <Box onClick={() => createServerModal.openModal()} sx={sx} p={'md'}>
-              <IconPlus color="green" size={rem(35)} />
+              <IconPlus color="green" size={rem(30)} />
             </Box>
             <Box onClick={() => joinServerModal.openModal()} sx={sx} p={'md'}>
-              <IconMessage size={rem(35)} />
+              <IconMessage size={rem(30)} />
             </Box>
             <Divider orientation="horizontal" w={'100%'} size={'md'} />
             {loadingServers ? (
@@ -167,14 +167,15 @@ export function Sidebar() {
                 <IconFingerprint size={rem(40)} />
               </Center>
             ) : (
-              <ScrollArea h={'50vh'}>
+              <ScrollArea h={'40vh'}>
                 {servers?.map((server) => (
                   <Tooltip
-                    w={rem(60)}
+                    w={'fit-content'}
                     withArrow
                     key={server.id}
                     label={server.name}
                     transitionProps={{ duration: 0 }}
+                    position="right"
                   >
                     <Box
                       my={'md'}
