@@ -1,4 +1,5 @@
 import { Drawer } from '@mantine/core';
+
 import { useGeneralStore } from '../../stores';
 import { Sidebar } from './sidebar';
 import { ServerSidebar } from '../server';

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Image, NavLink, Sx, rem } from '@mantine/core';
 import { IconCrown, IconShieldCheck } from '@tabler/icons-react';
+
 import {
   ChannelType,
   Member,

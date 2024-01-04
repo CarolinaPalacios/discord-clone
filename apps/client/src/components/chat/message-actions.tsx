@@ -1,4 +1,5 @@
 import { Flex } from '@mantine/core';
+
 import { MessageButton } from './message-button';
 
 interface MessageActionsProps {

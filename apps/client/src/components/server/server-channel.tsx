@@ -109,6 +109,7 @@ export function ServerChannel({
                 icon={<IconEdit style={{ marginLeft: '8px' }} size={20} />}
               />
             )}
+
             {role === MemberRole.Admin && (
               <NavLink
                 sx={styles}

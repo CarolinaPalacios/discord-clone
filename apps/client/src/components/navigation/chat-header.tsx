@@ -6,6 +6,7 @@ import {
   Text,
   useMantineTheme,
 } from '@mantine/core';
+
 import { IconHash, IconMenu2 } from '@tabler/icons-react';
 import { useMemberById, useServer } from '../../hooks';
 import { useGeneralStore } from '../../stores';

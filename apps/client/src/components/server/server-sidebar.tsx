@@ -1,4 +1,5 @@
 import { ScrollArea, Stack, Navbar, rem } from '@mantine/core';
+
 import { ServerSidebarSection } from './server-sidebar-section';
 import { SpotLightTrigger } from './server-search';
 import { ServerChannel } from './server-channel';

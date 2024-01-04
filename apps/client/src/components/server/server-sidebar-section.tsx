@@ -1,5 +1,6 @@
 import { Flex, Text, Tooltip } from '@mantine/core';
 import { IconPlus, IconSettings } from '@tabler/icons-react';
+
 import { ChannelType, MemberRole } from '../../gql/graphql';
 import { useModal } from '../../hooks';
 import { useGeneralStore } from '../../stores';

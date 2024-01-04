@@ -23,6 +23,7 @@ import {
   IconMessage,
 } from '@tabler/icons-react';
 import { UserButton } from '@clerk/clerk-react';
+
 import { useModal, useServers } from '../../hooks';
 import { useGeneralStore } from '../../stores';
 

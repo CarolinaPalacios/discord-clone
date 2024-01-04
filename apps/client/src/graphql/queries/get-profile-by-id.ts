@@ -6,10 +6,12 @@ export const GET_PROFILE_BY_ID = gql`
       id
       name
       email
+
       servers {
         id
         name
       }
+
       channels {
         id
         name
