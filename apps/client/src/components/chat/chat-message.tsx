@@ -64,7 +64,7 @@ export function ChatMessage({ message, showUserInfo }: ChatMessageProps) {
         padding: theme.spacing.xs,
         margin: '0px',
         cursor: 'pointer',
-        width: '96%',
+        width: '99%',
         '&:hover': {
           backgroundColor:
             theme.colorScheme === 'dark'

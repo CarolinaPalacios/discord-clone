@@ -96,7 +96,7 @@ export function ChatWindow({
           m={0}
           p={0}
           h="calc(100vh - 40px)"
-          w={drawerOpen ? 'calc(100% - 350px)' : 'calc(100% - 110px)'}
+          w={'calc(100% - 110px)'}
           sx={(theme) => ({
             backgroundColor:
               theme.colorScheme === 'dark'
@@ -113,13 +113,13 @@ export function ChatWindow({
               <Flex>
                 {channelType === ChannelType.Video && (
                   <Flex w={'100%'}>
-                    <Flex w={isSmallerThanLg ? '100vw' : '50vw'}>
+                    <Flex w={isSmallerThanLg ? '100vw' : '60vw'}>
                       <MediaRoom chatId={chatName} audio={true} video={true} />
                     </Flex>
                     {!isSmallerThanLg && (
                       <Flex
                         direction={'column'}
-                        w={drawerOpen ? '26vw' : '40vw'}
+                        w={drawerOpen ? '26vw' : '30vw'}
                         mr={'md'}
                       >
                         <ChatMessages
@@ -127,7 +127,12 @@ export function ChatWindow({
                           conversationId={conversationId}
                           channelId={channelId}
                         />
-                        <Flex mt="md" justify={'center'} align={'center'}>
+                        <Flex
+                          mt="md"
+                          ml={'-20px'}
+                          justify={'center'}
+                          align={'center'}
+                        >
                           <TextInputSection
                             setImagePreview={setImagePreview}
                             imagePreview={imagePreview}
@@ -141,11 +146,11 @@ export function ChatWindow({
                 )}
                 {channelType === ChannelType.Audio && (
                   <>
-                    <Flex w={isSmallerThanLg ? '100vw' : '50vw'}>
+                    <Flex w={isSmallerThanLg ? '100vw' : '60vw'}>
                       <MediaRoom chatId={chatName} audio={true} video={false} />
                     </Flex>
                     {!isSmallerThanLg && (
-                      <Flex direction={'column'} w={'30vw'}>
+                      <Flex direction={'column'} w={'31vw'}>
                         <ChatMessages
                           messages={messages as MessageUnion[]}
                           channelId={channelId}
@@ -154,6 +159,7 @@ export function ChatWindow({
                         <Flex
                           mt={'md'}
                           w={'100%'}
+                          ml={'-20px'}
                           justify={'center'}
                           align={'center'}
                         >

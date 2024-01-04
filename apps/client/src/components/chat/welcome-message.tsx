@@ -7,7 +7,7 @@ interface WelcomeMessageProps {
 }
 export function WelcomeMessage({ type, name }: WelcomeMessageProps) {
   return (
-    <Flex align={'start'} direction={'column'} p="md">
+    <Flex align={'start'} direction={'column'} p="xs">
       <Box
         sx={(theme) => ({
           backgroundColor:
@@ -17,7 +17,7 @@ export function WelcomeMessage({ type, name }: WelcomeMessageProps) {
           textAlign: 'center',
           marginBottom: '30px',
           borderRadius: '50%',
-          padding: theme.spacing.md,
+          padding: theme.spacing.lg,
           cursor: 'pointer',
           marginTop: '20px',
         })}

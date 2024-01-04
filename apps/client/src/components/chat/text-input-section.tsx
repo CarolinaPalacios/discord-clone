@@ -39,6 +39,7 @@ export function TextInputSection({
       <TextInput
         w="100%"
         placeholder={'Message'}
+        mr={'lg'}
         {...form.getInputProps('content')}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {

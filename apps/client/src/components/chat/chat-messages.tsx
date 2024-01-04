@@ -34,7 +34,7 @@ export function ChatMessages({ channelId, messages }: ChatMessagesProps) {
             ? 'calc(100vh - 280px)'
             : 'calc(100vh - 180px)'
         }
-        ml={channel?.type !== ChannelType.Text ? '20px' : '100px'}
+        ml={channel?.type !== ChannelType.Text ? '20px' : '60px'}
         viewportRef={viewport}
       >
         {member?.profile?.name && (
