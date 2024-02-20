@@ -136,7 +136,13 @@ export function ChatMessage({ message, showUserInfo }: ChatMessageProps) {
             <Text ml={'5%'}>{message.content}</Text>
           </Flex>
           {message.fileUrl && (
-            <Image src={message.fileUrl} width={rem(200)} height={rem(200)} />
+            <Image
+              src={message.fileUrl}
+              width={rem(200)}
+              height={rem(200)}
+              ml={rem(144)}
+              radius={rem(20)}
+            />
           )}
         </Flex>
       ) : (

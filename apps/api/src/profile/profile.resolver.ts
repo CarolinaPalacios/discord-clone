@@ -17,6 +17,8 @@ export class ProfileResolver {
 
   @Query(() => Profile)
   async getProfileById(@Args('profileId') profileId: number) {
+    console.log(profileId);
+
     return this.profileService.getProfileById(profileId);
   }
 }

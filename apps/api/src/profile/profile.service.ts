@@ -12,10 +12,9 @@ export class ProfileService {
         email: createProfileDto.email,
       },
     });
-    if (profile) {
-      return profile;
-    }
-    return this.prisma.profile.create({
+    if (profile) return profile;
+
+    return await this.prisma.profile.create({
       data: {
         name: createProfileDto.name,
         email: createProfileDto.email,
@@ -25,18 +24,17 @@ export class ProfileService {
   }
 
   async getProfileById(profileId: number) {
-    return this.prisma.profile.findUnique({
+    const profile = await this.prisma.profile.findUnique({
       where: {
         id: profileId,
       },
       include: {
-        servers: {
-          include: {
-            channels: true,
-          },
-        },
+        servers: true,
+        channels: true,
+        members: true,
       },
     });
+    return profile;
   }
 
   async getProfileByEmail(email: string) {

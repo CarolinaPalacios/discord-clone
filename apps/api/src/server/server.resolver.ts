@@ -1,6 +1,7 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { Request } from 'express';
+import { ApolloError } from 'apollo-server-express';
 import { v4 as uuidv4 } from 'uuid';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { join } from 'path';
@@ -42,6 +43,7 @@ export class ServerResolver {
     @Args('file', { type: () => GraphQLUpload, nullable: true })
     file: GraphQLUpload.FileUpload
   ) {
+    if (!file) throw new ApolloError('Please upload an image');
     const imageUrl = await this.storeImageAndReturnUrl(file);
     return this.serverService.createServer(input, imageUrl);
   }

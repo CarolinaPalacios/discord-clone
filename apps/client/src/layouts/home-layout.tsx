@@ -37,7 +37,6 @@ export function HomeLayout() {
     },
     skip: !profile?.id,
     onCompleted: (data) => {
-      console.log(data);
       setProfile(data.getProfileById);
     },
     onError: (error) => {

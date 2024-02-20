@@ -95,6 +95,7 @@ export function ServerSearch({ children }: ServerSearchProps) {
   return (
     <Flex>
       <SpotlightProvider
+        w={'100%'}
         actions={buildActions()}
         searchPlaceholder="Search..."
         shortcut="shift + enter"

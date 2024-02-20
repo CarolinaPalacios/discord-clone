@@ -4,7 +4,7 @@ import { Profile } from '../gql/graphql';
 
 interface ProfileStore {
   profile: Profile | null;
-  setProfile: (profile: Profile | null) => void;
+  setProfile: (profile: Profile | undefined) => void;
 }
 
 export const useProfileStore = create<ProfileStore>()(

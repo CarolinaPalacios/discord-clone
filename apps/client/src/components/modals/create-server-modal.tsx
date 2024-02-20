@@ -23,6 +23,8 @@ import {
 } from '../../gql/graphql';
 import { useProfileStore } from '../../stores';
 
+import './create-server-modal.css';
+
 export function CreateServerModal() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -83,14 +85,15 @@ export function CreateServerModal() {
 
   return (
     <Modal
-      title="Create a server"
+      title="Customize your server"
       opened={isOpen}
       onClose={closeModal}
-      size="md"
+      size="33rem"
+      centered
     >
-      <Text c={'dimmed'}>
-        Give your server a personality by choosing a name and an image. You can
-        always change it later.
+      <Text c={'dimmed'} align="center" mt={'sm'}>
+        Give your new server a personality by choosing a name and an icon. You
+        can always change it later.
       </Text>
       <form onSubmit={form.onSubmit(() => onSubmit())}>
         <Stack>
@@ -183,15 +186,23 @@ export function CreateServerModal() {
             {...form.getInputProps('name')}
             error={form.errors.name}
           />
-          <Button
-            disabled={!!form.errors.name || loading}
-            w={'30%'}
-            type={'submit'}
-            variant="gradient"
-            mt={'md'}
-          >
-            Create Server
-          </Button>
+          <Flex justify="space-between" align="center" py={'md'}>
+            <Button
+              disabled={!!form.errors.name || loading}
+              type="button"
+              variant="transparent"
+              onClick={closeModal}
+            >
+              Back
+            </Button>
+            <Button
+              disabled={!!form.errors.name || loading}
+              type="submit"
+              variant="gradient"
+            >
+              Create Server
+            </Button>
+          </Flex>
         </Stack>
       </form>
     </Modal>

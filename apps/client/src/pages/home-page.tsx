@@ -9,7 +9,6 @@ import { useProfileStore } from '../stores';
 export function HomePage() {
   const { session } = useSession();
   console.log({ session: session });
-  const profile = useProfileStore((state) => state.profile);
 
   const [createProfile] = useMutation<CreateProfileMutation>(CREATE_PROFILE);
   const setProfile = useProfileStore((state) => state.setProfile);
@@ -18,38 +17,28 @@ export function HomePage() {
     // User doesn't exist in the backend, so create them
     const createProfileFn = async () => {
       try {
-        await createProfile({
-          variables: {
-            input: {
-              email: session?.user.emailAddresses[0].emailAddress,
-              name: session?.user.fullName,
-              imageUrl: session?.user.imageUrl,
+        if (session?.user.emailAddresses[0].emailAddress) {
+          await createProfile({
+            variables: {
+              input: {
+                email: session.user.emailAddresses[0].emailAddress,
+                name: session.user.fullName,
+                imageUrl: session.user.imageUrl,
+              },
             },
-            skip: !session?.user.emailAddresses[0].emailAddress,
-          },
-          onCompleted: (data) => {
-            console.log({ data: data });
-            setProfile(data.createProfile);
-          },
-          onError: (error) => {
-            console.error('Error creating user in backend:', error);
-          },
-        });
+            onCompleted: (data) => {
+              console.log({ data: data });
+              setProfile(data.createProfile);
+            },
+          });
+        }
       } catch (error) {
         console.error('Error creating user in backend:', error);
       }
     };
 
-    if (!profile?.id) createProfileFn();
-  }, [
-    session,
-    setProfile,
-    profile?.id,
-    profile?.email,
-    profile?.imageUrl,
-    profile?.name,
-    createProfile,
-  ]);
+    createProfileFn();
+  }, [session, setProfile, createProfile]);
 
   return (
     <div>
