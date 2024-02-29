@@ -87,9 +87,9 @@ After that, you should be able to delete the `postgres-data` folder.
    LK_API_SECRET=
 ```
 
-The JWT_PUBLIC_KEY and REFRESH_TOKEN_SECRET are the same for now, you can find them on Clerk dashboard, you have to create an account and a project, then you will find them at "API Keys" section and under "Advanced" tab, select "PEM public key". JWT_SECRET is in the same section as "Secret keys". [Clerk dashboard](https://dashboard.clerk.com/).
+The `JWT_PUBLIC_KEY` and `REFRESH_TOKEN_SECRET` are the same for now, you can find them on Clerk dashboard, you have to create an account and a project, then you will find them at "API Keys" section and under "Advanced" tab, select "PEM public key". `JWT_SECRET` is in the same section as "Secret keys". [Clerk dashboard](https://dashboard.clerk.com/).
 
-Same for LK_API_KEY and LK_API_SECRET, you can find them on the LiveKit dashboard, you have to create an account and a project, then navigate to "Settings" section and under "Keys" tab, select "Add new key". [LiveKit dashboard](https://cloud.livekit.io/).
+Same for `LK_API_KEY` and `LK_API_SECRET`, you can find them on the LiveKit dashboard, you have to create an account and a project, then navigate to "Settings" section and under "Keys" tab, select "Add new key". [LiveKit dashboard](https://cloud.livekit.io/).
 
 2. [Generate Prisma files]():
 
@@ -137,10 +137,10 @@ VITE_LK_SERVER_URL=
 VITE_LK_TOKEN=
 ```
 
-VITE_CLERK_PUBLISHABLE_KEY is your Clerk publishable key, you will find them at "API Keys" section as "Publishable key". [Clerk dashboard](https://dashboard.clerk.com/).
+`VITE_CLERK_PUBLISHABLE_KEY` is your Clerk publishable key, you will find them at "API Keys" section as "Publishable key". [Clerk dashboard](https://dashboard.clerk.com/).
 
-VITE_LK_SERVER_URL is the URL of the LiveKit server. You can find it on the LiveKit dashboard under "Settings" section and under "Keys" tab, select the project that you've created and copy the URL of "Websocket URL".
-For VITE_LK_TOKEN, you will click on "Generate token" button. [LiveKit dashboard](https://cloud.livekit.io/).
+`VITE_LK_SERVER_URL` is the URL of the LiveKit server. You can find it on the LiveKit dashboard under "Settings" section and under "Keys" tab, select the project that you've created and copy the URL of "Websocket URL".
+For `VITE_LK_TOKEN`, you will click on "Generate token" button. [LiveKit dashboard](https://cloud.livekit.io/).
 
 2. [Start the Vite server](): To start the Vite server, execute the following command in the root directory of the repository:
 
