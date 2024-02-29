@@ -16,7 +16,7 @@
 ![Website](https://img.shields.io/badge/website-down-red)
 
 <div style="display: flex;">
-  <img src="./discord-chat-image.png" alt="Discord Chat Image" style="width: 48%;">
+  <img src="./discord-chat-image.png" alt="Discord Chat Image" style="width: 48%; margin-left: 10px;">
   
   <img src="./discord-server-menu.png" alt="Another Image" style="width: 48%; margin-left: 10px;">
 </div>
