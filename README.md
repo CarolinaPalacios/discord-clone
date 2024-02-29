@@ -15,6 +15,12 @@
 ![Stars](https://img.shields.io/github/stars/CarolinaPalacios/discord-clone)
 ![Website](https://img.shields.io/badge/website-down-red)
 
+<div style="display: flex;">
+  <img src="./discord-chat-image.png" alt="Discord Chat Image" style="width: 50%;">
+  
+  <img src="./discord-server-menu.png" alt="Another Image" style="width: 50%; margin-left: 10px;">
+</div>
+
 ## Getting started
 
 ### Prerequisites
@@ -40,15 +46,22 @@ npm install -g @nestjs/cli
 This will install the NestJS command-line interface globally on your machine, allowing you to use it to generate NestJS projects and components.
 Alternatively, if you prefer not to install NestJS globally, this project have it already installed as a development dependency in your package.json file. You can use it as well by running `npx nest` instead of `nest`.
 
-1. [Clone the repository](https://github.com/CarolinaPalacios/discord-clone): Clone, download or fork the repository to your local machine.
+## 💾 Installation
+
+[Clone the repository](https://github.com/CarolinaPalacios/discord-clone): Clone, download or fork the repository to your local machine.
 
 ```bash
-git clone https://github.com/CarolinaPalacios/discord-clone
+# Clone the repository
+$ git clone https://github.com/CarolinaPalacios/discord-clone
+
+# Navigate to the cloned repository
+$ cd discord-clone
+
+# Install dependencies
+$ pnpm install
 ```
 
-2. [Install dependencies](): Run `pnpm install` to install the dependencies.
-
-## Backend environment setup
+## 🚀 Backend environment setup
 
 1. [Start the PostgreSQL and Redis servers]():
 
@@ -127,7 +140,7 @@ This will initialize the server in development mode using NX in the `api` enviro
 
 To see the API documentation, with your server running, go to [GraphQL Playground](http://localhost:3000/graphql) and select the `DOCS` tab on the right side of the screen to see all queries, mutations and subscriptions. You can also check and download the [GraphQL Schema](http://localhost:3000/graphql) by selecting the `SCHEMA` tab.
 
-## Frontend environment setup
+## 🖌️ Frontend environment setup
 
 1. [Create a .env file](): Create a `.env` file in the `apps/client` folder. For this file you will need to add the following environment variables:
 
