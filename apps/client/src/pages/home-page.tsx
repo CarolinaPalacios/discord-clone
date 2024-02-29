@@ -8,7 +8,6 @@ import { useProfileStore } from '../stores';
 
 export function HomePage() {
   const { session } = useSession();
-  console.log({ session: session });
 
   const [createProfile] = useMutation<CreateProfileMutation>(CREATE_PROFILE);
   const setProfile = useProfileStore((state) => state.setProfile);
@@ -27,7 +26,6 @@ export function HomePage() {
               },
             },
             onCompleted: (data) => {
-              console.log({ data: data });
               setProfile(data.createProfile);
             },
           });

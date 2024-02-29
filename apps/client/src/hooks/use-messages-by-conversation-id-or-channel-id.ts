@@ -24,7 +24,5 @@ export function useMessagesByConversationIdOrChannelId() {
     }
   );
 
-  console.log(data, memberId);
-
   return data?.getMessagesByConversationIdOrChannelId.messages || [];
 }

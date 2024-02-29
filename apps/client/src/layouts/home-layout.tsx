@@ -28,7 +28,6 @@ if (!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
 
 export function HomeLayout() {
   const profile = useProfileStore((state) => state.profile);
-  console.log('profile', profile);
   const setProfile = useProfileStore((state) => state.setProfile);
 
   const profileData = useQuery<GetProfileByIdQuery>(GET_PROFILE_BY_ID, {
@@ -43,7 +42,6 @@ export function HomeLayout() {
       console.log(error);
     },
   });
-  console.log(profileData);
 
   return (
     <Flex w="100vw" justify={'center'} h={'100vh'} align={'center'}>

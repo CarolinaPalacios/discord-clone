@@ -28,7 +28,6 @@ export function useMessageDeletedSubscription() {
 
   useEffect(() => {
     const deletedMessage = dataMessageDeleted?.messageDeleted.message;
-    console.log('deletedMessage:', deletedMessage);
 
     const cachedData =
       cache.readQuery<GetMessagesByConversationIdOrChannelIdQuery>({

@@ -16,7 +16,9 @@ type Channel {
   updatedAt: DateTime
 }
 
-"""Defines the type of the channel"""
+"""
+Defines the type of the channel
+"""
 enum ChannelType {
   AUDIO
   TEXT
@@ -117,7 +119,9 @@ type Member {
   updatedAt: String
 }
 
-"""Define the role of a member in a server"""
+"""
+Define the role of a member in a server
+"""
 enum MemberRole {
   ADMIN
   GUEST
@@ -156,13 +160,22 @@ type Mutation {
   createServer(file: Upload, input: CreateServerDto!): Server!
   deleteChannelFromServer(input: DeleteChannelFromServerDto!): String!
   deleteMemberFromServer(input: DeleteMemberDto!): Server!
-  deleteMessage(channelId: Float, conversationId: Float, messageId: Float!): MessageResult!
+  deleteMessage(
+    channelId: Float
+    conversationId: Float
+    messageId: Float!
+  ): MessageResult!
   deleteServer(input: DeleteServerDto!): String!
   getOrCreateConversation(input: GetOrCreateConversationDto!): Conversation!
   leaveServer(input: LeaveServerDto!): String!
   login(email: String!): Profile!
   updateChannel(input: UpdateChannelDto!): Channel!
-  updateMessage(channelId: Float, content: String!, conversationId: Float, messageId: Float!): MessageResult!
+  updateMessage(
+    channelId: Float
+    content: String!
+    conversationId: Float
+    messageId: Float!
+  ): MessageResult!
   updateServer(file: Upload, input: UpdateServerDto!): Server!
   updateServerWithNewInviteCode(serverId: Float): Server!
 }
@@ -181,7 +194,10 @@ type Query {
   getMemberById(memberId: Float, serverId: Float): Member!
   getMemberByProfileId(profileId: Float, serverId: Float): Member!
   getMessagesByChannelId(channelId: Float!): [Message!]!
-  getMessagesByConversationIdOrChannelId(channelId: Float, conversationId: Float): MessagesResult!
+  getMessagesByConversationIdOrChannelId(
+    channelId: Float
+    conversationId: Float
+  ): MessagesResult!
   getProfileById(profileId: Float!): Profile!
   getServerById(id: Float!): Server!
   getServerByProfileIdOfMember(profileId: Float!): [Server!]!
@@ -216,5 +232,7 @@ input UpdateServerDto {
   serverId: Float
 }
 
-"""The `Upload` scalar type represents a file upload."""
+"""
+The `Upload` scalar type represents a file upload.
+"""
 scalar Upload

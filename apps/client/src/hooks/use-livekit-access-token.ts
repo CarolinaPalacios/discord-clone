@@ -22,8 +22,6 @@ export function useLivekitAccessToken({ chatId }: UseLivekitAccessTokenArgs) {
       },
     });
 
-  console.log(dataCreateAccessToken);
-
   useEffect(() => {
     createToken();
   }, [createToken, chatId, email]);

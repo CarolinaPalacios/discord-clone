@@ -20,7 +20,6 @@ interface ChatHeaderProps {
 export function ChatHeader({ opened, toggle, type }: ChatHeaderProps) {
   const theme = useMantineTheme();
   const { server } = useServer();
-  console.log(server, ':server');
   const memberData = useMemberById();
   const { drawerOpen } = useGeneralStore((state) => state);
 

@@ -3,9 +3,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
 import { join } from 'path';
-
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ServerModule } from './server/server.module';
 import { ProfileModule } from './profile/profile.module';
 import { MemberModule } from './member/member.module';
@@ -74,7 +71,7 @@ import { redisPubSubProvider } from './redis/redis-pubsub.provider';
 
     AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, TokenService, ConfigService, redisPubSubProvider],
+  controllers: [],
+  providers: [TokenService, ConfigService, redisPubSubProvider],
 })
 export class AppModule {}

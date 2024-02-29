@@ -69,7 +69,6 @@ export class ChatResolver {
     @Args('conversationId', { nullable: true }) conversationId?: number,
     @Args('channelId', { nullable: true }) channelId?: number
   ): AsyncIterator<DirectMessage> {
-    console.log('sub69', conversationId, channelId);
     return this.pubSub.asyncIterator('messageCreated');
   }
 
@@ -167,6 +166,7 @@ export class ChatResolver {
       });
     } catch (error) {
       console.log(error);
+      throw new ApolloError(error.message);
     }
     return deletedMessage;
   }
@@ -176,7 +176,6 @@ export class ChatResolver {
     @Args('conversationId', { nullable: true }) conversationId?: number,
     @Args('channelId', { nullable: true }) channelId?: number
   ): AsyncIterator<MessageResult> {
-    console.log('sub69', conversationId, channelId);
     return this.pubSub.asyncIterator('messageDeleted');
   }
 
@@ -212,7 +211,6 @@ export class ChatResolver {
     @Args('conversationId', { nullable: true }) conversationId?: number,
     @Args('channelId', { nullable: true }) channelId?: number
   ): AsyncIterator<MessageResult> {
-    console.log('sub69', conversationId, channelId);
     return this.pubSub.asyncIterator('messageUpdated');
   }
 
@@ -258,7 +256,6 @@ export class ChatResolver {
     @Args('channelId', { nullable: true }) channelId?: number,
     @Args('conversationId', { nullable: true }) conversationId?: number
   ): AsyncIterator<Message> {
-    console.log('sub69', conversationId, channelId);
     return this.pubSub.asyncIterator('channelMessageCreated');
   }
 

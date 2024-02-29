@@ -43,7 +43,6 @@ export function useMessageCreatedSubscription() {
           channelId,
         },
       });
-    console.log(cachedData);
     if (
       cachedData &&
       newMessage &&
@@ -54,10 +53,6 @@ export function useMessageCreatedSubscription() {
           ...cachedData.getMessagesByConversationIdOrChannelId.messages,
           newMessage.message,
         ];
-        console.log(
-          updatedMessages,
-          cachedData.getMessagesByConversationIdOrChannelId.messages
-        );
 
         try {
           cache.writeQuery<GetMessagesByConversationIdOrChannelIdQuery>({

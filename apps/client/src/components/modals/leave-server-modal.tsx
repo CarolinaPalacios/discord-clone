@@ -24,7 +24,6 @@ export function LeaveServerModal() {
       },
     },
     onCompleted: (data) => {
-      console.log(data);
       navigate('/');
     },
     refetchQueries: ['GetServerByProfileIdOfMember'],
