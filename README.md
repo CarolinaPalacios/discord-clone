@@ -18,7 +18,7 @@
 <div style="display: flex;">
   <img src="./discord-chat-image.png" alt="Discord Chat Image" style="width: 45%;">
   
-  <img src="./discord-server-menu.png" alt="Another Image" style="width: 45%; margin-left: 10px;">
+  <img src="./discord-server-menu.png" alt="Another Image" style="width: 45%; margin-left: 30px;">
 </div>
 
 ## Getting started
